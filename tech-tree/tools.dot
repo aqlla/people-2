@@ -1,0 +1,72 @@
+digraph TechTree {
+    // rankdir=LR;
+    node [shape=box, style=filled]
+
+    subgraph process {
+        node [color="orange"]
+
+        pott [label="Pottery"]
+        weav [label="Weaving"]
+        leat [label="Leatherworking"]
+        // wood [label="Woodworking"]
+        // meta [label="Metalurgy"]
+        haft [label="Hafting"]
+    }
+
+    // Define styles for technologies and concepts
+    subgraph tools {
+        node [color="#888888"]
+
+        tool [label="Tools"]
+        plow [label="Plow"]
+        axe  [label="Axe"]
+        nets [label="Nets"] 
+    } 
+
+    subgraph weapons {
+        node [color="red"]
+
+        weap [label="Weapons"]
+        club [label="Club"]
+        knif [label="Knife"]
+        sper [label="Spear"]
+        atll [label="Atlatl"]
+        arow [label="Bow & Arrow"]
+        pike
+        swrd [label="Sword"]
+    }
+
+    subgraph protection {
+        node [color="#954545"]
+
+        clot [label="Clothing"]
+        armr [label="Armor"]       
+    }
+
+    subgraph energy {
+        node [color="yellow"]
+
+        fire [label="Fire"]
+        cook [label="Cooking"]
+    }
+
+    // scav -> { burn ftol asto clot verb ferm shlt }
+    // hunt -> { tool fish doma clot verb }
+
+    
+    tool -> { fire haft weav leat }
+	haft -> { axe knif sper }
+    fire -> { cook }
+    // fish -> { nets line }
+
+    // weap -> { knif club sper }
+    knif -> { swrd plow }
+    sper -> { atll pike }
+    atll -> arow
+
+    weav -> { armr loom nets }
+    cook -> { pott bake }
+    // ferm -> { brew } 
+    // bake -> { oven }
+    // kiln -> oven -> furn
+}

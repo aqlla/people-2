@@ -1,0 +1,202 @@
+digraph TechTree {
+    // rankdir=LR;
+
+    // Default node style
+    node [shape=box, style=filled]
+
+
+    subgraph process {
+        node [color="orange"]
+
+        scav [label="Foraging"]
+        hunt [label="Hunting"]
+        fish [label="Fishing"]
+
+        pott [label="Pottery"]
+        weav [label="Weaving"]
+        leat [label="Leatherworking"]
+        wood [label="Woodworking"]
+        meta [label="Metalurgy"]
+
+        haft [label="Hafting"]
+
+        bake
+        ferm
+        brew
+    }
+
+    // Define styles for technologies and concepts
+    subgraph tools {
+        node [color="#888888"]
+
+        tool [label="Found Tools"]
+        tools [label="Tools"]
+
+        plow [label="Plow"]
+        fash [label="Fashioned Tools"]
+
+        asto [label="Astronomy"]
+        cale [label="Calendar"]
+
+        axe  [label="Axe"]
+        hamm [label="Hammer"]
+
+        nets [label="Nets"] 
+        line [label="Line & Hook"]
+        trch
+    } 
+
+    subgraph weapons {
+        node [color="red"]
+
+        weap [label="Weapons"]
+        club [label="Club"]
+        knif [label="Knife"]
+        sper [label="Spear"]
+        atll [label="Atlatl"]
+        arow [label="Bow & Arrow"]
+        pike
+        swrd [label="Sword"]
+    }
+
+    subgraph protection {
+        node [color="#954545"]
+
+        shlt [label="Found Shelter"]
+        clot [label="Clothing"]
+        armr [label="Armor"]       
+        shel [label="Built Shelter"]
+    }
+
+    subgraph food {
+        node [color="#5ea37f"]
+        // leva [label="Levallois Technique"]
+        agr [label="Agriculture"]
+        doma [label="Animal Dom"]
+        livs [label="Livestock"]
+        domc [label="Founder Crops"]
+        gran [label="Graneries"]
+
+        milk
+        "Cheese"
+    }
+
+    subgraph energy {
+        node [color="yellow"]
+
+        burn [label="Found Fire"]
+        fire [label="Fashioned Fire"]
+        cook [label="Cooking"]
+    }
+
+    subgraph comms_application {
+        node [color="#fb7add"]
+        // stry [label="Storytelling"]
+        // hist [label="History"]
+    }
+
+    // Communication subgraph with nested levels
+    subgraph communication {
+        label = "Communication";
+        node [color="#ff00c3"];
+
+        // body [label="Body Language"]
+        verb [label="Basic Linguistics"]
+        lang [label="Advanced Language"]
+        word [label="Written Language"]
+    }
+
+    subgraph concept_social {
+        node [color="#fb7add"]
+        expt [label="Experimentation"]
+        spec [label="Specialization"]
+        relg [label="Religion"]
+        stru [label="Social Structure"]
+        reco [label="Record Keeping"]
+        trib [label="Tribalism"]
+        teac [label="Teaching"]
+
+        lead [label="Leadership"]
+    }
+
+    subgraph evolution {
+        node [shape=oval]
+
+        evnu [label="Nutrition+++" color="#ac8888"]
+    }
+
+
+    tools -> { weap }
+    
+    burn -> fire
+    
+    fire -> { cook trch }
+    
+    scav -> { burn tool asto clot verb ferm shlt }
+    
+    hunt -> { fash fish doma clot verb }
+
+    fish -> { nets line }
+
+    shlt -> { shel }
+    asto -> { cale relg }
+
+    verb -> { fire teac cale }
+    
+    lang -> { stru }
+    
+    word -> reco
+    
+    tool -> { fire fash }
+    
+    fash -> { pott cook weav shel doma leat line nets }
+
+    weap -> { knif club sper }
+
+    knif -> { swrd plow }
+
+    club -> { hamm axe }
+
+    sper -> { atll pike }
+    
+    atll -> arow
+
+    weav -> { armr loom nets }
+
+    cook -> { pott evnu bake }
+
+    ferm -> { brew } 
+
+    bake -> { oven }
+
+    cale -> { domc lang }
+    
+    teac -> { lang domc }
+
+    relg -> { stru trib }
+
+    stru -> { spec trib word }
+
+    trib -> lead
+    
+    doma -> { agr } 
+
+    domc -> { agr ferm }
+    
+    agr -> { shel livs gran }
+
+    livs -> { plow milk leat }
+
+    clot -> { armr }
+
+    milk -> Cheese
+
+    gran -> word
+
+    shel -> { gran }
+
+    pott -> { gran kiln }
+
+    kiln -> oven -> furn
+
+}

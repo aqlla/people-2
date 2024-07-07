@@ -1,0 +1,80 @@
+digraph TechTree {
+    // rankdir=LR;
+    node [shape=box, style=filled]
+
+	subgraph media {
+    	rankdir=BT;
+
+        label = "Material"
+		node [shape=parallelogram margin=0]
+
+		// Stone Flint Bone Wood Hide Leather
+
+	}
+
+    subgraph process {
+
+        node [color="orange"]
+
+        haft [label="Hafting"]
+		core [label="Prepared Core\nTechnique"]
+        weav [label="Weaving"]
+		cook [label="Cooking"]
+
+		haft -> core
+    }
+
+	subgraph found {
+		node [shape=egg]
+
+		burn hamm club
+	}
+
+
+    // Define styles for technologies and concepts
+    subgraph tools {
+        node [color="#888888"]
+
+		hamm [label="Stone Hammer\n(a rock)"]
+		chop [label="Chopper\n(a sharper rock)"]
+        haxe [label="Hand Axe (a smaller,\nsharper rock)"]
+        knif [label="Knife"]
+		aatl [label="Atlatl"]
+
+        burn [label="Found Fire"]
+        fire [label="Controlled Fire"]
+
+        pott [label="Pottery"]
+		bask [label="Basket"]
+        nets [label="Net"] 
+		// trps [label="Traps"]
+
+		hamm -> chop
+		chop -> haxe
+
+		burn -> fire
+    } 
+
+    subgraph weapons {
+        node [color="red"]
+
+        club [label="Club\n(a big stick)"]
+        sper [label="Spear\n(a sharp stick)"]
+		spr2 [label="Stone-tipped\nSpear"]
+		// poon [label="Harpoon"]
+		bowa  [label="Bow & Arrow"]
+
+		club -> sper -> spr2
+		
+		sper -> aatl -> bowa
+		spr2 -> { poon bowa }
+    }
+
+	fire -> { pott cook }
+
+	haft -> chop
+	core -> { spr2 knif }
+
+	haxe -> knif
+	weav -> { bask nets }
+}

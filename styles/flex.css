@@ -1,0 +1,44 @@
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    text-align: center;
+
+    margin: 5px 0;
+}
+
+.list-item {
+    display: flex;
+    margin: 5px;
+
+    margin: 10px 2% 15px;
+    border: 2px solid #333;
+}
+
+.list-item>.title {
+    margin-top: 2px;
+    padding-bottom: 2px;
+    font-size: 20px;
+    border-bottom: 1px solid #666;
+}
+
+.list-item>.body>* {
+    display: flex;
+    padding: 5px;
+}
+
+.list-item>.body>.content-main {
+    flex-grow: 2;
+    justify-content: space-evenly;
+}
+
+.list-item>.body>.left {
+    /* flex-shrink: 2; */
+    border-right: 1px solid #666;
+}

@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goldberg Polyhedra Test</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script type="module">
+        import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
+        
+        function normalizeVertices(vertices) {
+            vertices.forEach(vertex => {
+                const length = Math.sqrt(vertex.x * vertex.x + vertex.y * vertex.y + vertex.z * vertex.z);
+                vertex.x /= length;
+                vertex.y /= length;
+                vertex.z /= length;
+            });
+        }
+
+        function generateGoldbergPolyhedra() {
+            const subdivisions = 2; // Number of times to subdivide the icosahedron faces
+
+            // Create an icosahedron geometry
+            const icosahedron = new THREE.IcosahedronGeometry(1, subdivisions);
+
+            // Extract vertices and faces
+            const vertices = icosahedron.vertices.map(v => new THREE.Vector3(v.x, v.y, v.z));
+            const faces = icosahedron.faces.map(f => ({ a: f.a, b: f.b, c: f.c }));
+
+            // Normalize vertices to lie on the unit sphere
+            normalizeVertices(vertices);
+
+            return { vertices, faces };
+        }
+
+        // Initialize the Three.js Scene
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Basic Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+        pointLight.position.set(50, 50, 50);
+        scene.add(pointLight);
+
+        // Generate Goldberg Polyhedra
+        const { vertices, faces } = generateGoldbergPolyhedra();
+
+        // Create BufferGeometry
+        const geometry = new THREE.BufferGeometry();
+        const verticesArray = new Float32Array(vertices.length * 3);
+        vertices.forEach((vertex, i) => {
+            verticesArray[i * 3] = vertex.x;
+            verticesArray[i * 3 + 1] = vertex.y;
+            verticesArray[i * 3 + 2] = vertex.z;
+        });
+        const facesArray = new Uint32Array(faces.length * 3);
+        faces.forEach((face, i) => {
+            facesArray[i * 3] = face.a;
+            facesArray[i * 3 + 1] = face.b;
+            facesArray[i * 3 + 2] = face.c;
+        });
+        geometry.setAttribute('position', new THREE.BufferAttribute(verticesArray, 3));
+        geometry.setIndex(new THREE.BufferAttribute(facesArray, 1));
+
+        // Create Mesh
+        const material = new THREE.MeshBasicMaterial({ color: 0x0077ff, wireframe: true });
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+
+        // Set camera position
+        camera.position.z = 5;
+
+        // Render the Scene
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>

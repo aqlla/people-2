@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<head>
+    <title>GeoHex</title>
+
+<!--    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+          }
+        }
+      </script> -->
+
+    <script type="module" src="https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js"></script>
+<!--    <script src="https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.min.js"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/three@0.127.0/build/three.min.js"></script>-->
+
+<!--    <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>-->
+<!--    <script src="js/three.min.js"></script>-->
+   <!-- <script src="js/test.js"></script> -->
+   <script src="js/geotest2.js"></script>
+    <script src="./js/icosahedron.js"></script>
+   <script type="module" src="js/main2.js"></script>
+    <!-- <script type="module" src="./dist/index.js"></script> -->
+
+    <link rel="stylesheet" href="styles/basic.css">
+    <link rel="stylesheet" href="styles/flex.css">
+    <link rel="stylesheet" href="styles/sidebar.css">
+</head>
+<script type="application/javascript">
+     const toggleClass = (id, classname) => 
+        document.getElementById(id).classList.toggle(classname)
+</script>
+
+<body>
+
+    <div class="wrapper w-100">
+        <div id="sidebar" class="sidebar">
+            <div id="sidebar-head" class="prevent-select" onclick="toggleClass('sidebar', 'sidebar-closed')">
+                <div id="sidebar-title">Boids</div>
+            </div>
+
+            <div id="sidebar-content">
+
+                <div id="config" class="config flex-col">
+                    <div class="list-item flex-col">
+                        <div class="title center">Telemetry</div>
+                        <div id="telemetry" class="hud-section flex-col content-wrapper">
+                            <div><label class='generateLabel' for='radius'>Radius:</label><input id='radius' type='text' name='radius' value='30'/></div>
+                            <div><label class='generateLabel' for='subdivisions'>Subdivisions:</label><input id='subdivisions' type='text' name='subdivisions' value='25'/></div>
+                            <div><label class='generateLabel' for='tileSize'>TileSize:</label><input id='tileSize' type='text' name='tileSize' value='0.95'/></div>
+            
+                        </div>
+                    </div>
+
+                    <div class="flex-col list-item">
+                        <div class="title center prevent-select">Boid Separation</div>
+                        <div class="body flex-row">
+                            <div class="left flex-col">
+                                Enable<input name="separation-toggle" id="separationEnabled" type="checkbox">
+                            </div>
+
+                            <div class="flex-col content-main">
+                                Factor<input name="separation-factor" id="separationFactor" type="range" min="0.01"
+                                    max="5" value="0.1" class="slider">
+                                <output>0</output>
+                                View Distance<input name=separation-range id=separationRange type=range min=0 max=300
+                                    value=20 class=slider>
+                                <output>0</output>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="flex-col list-item">
+                        <div class="title center">Boid Cohesion</div>
+                        <div class="content flex-row">
+                            <div class="left flex-col">
+
+                                <div class="toggle flex-col">
+                                    Enable<input id="cohesionEnabled" type="checkbox">
+                                </div>
+                            </div>
+
+                            <div class="flex-col">
+                                <div class="slider flex-col">
+                                    Factor
+                                    <input id="cohesionFactor" type="range" min="0.01" max="5" value="50"
+                                        class="slider">
+                                </div>
+
+                                <div class="slider flex-col">
+                                    View Distance
+                                    <input id="cohesionRange" type="range" min="1" max="100" value="50" class="slider">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="flex-col list-item">
+                        <div class="title">Boid Alignment</div>
+                        <div class="content flex-row">
+                            <div class="left flex-col">
+
+                                <div class="toggle flex-col">
+                                    Enable<input id="alignmentEnabled" type="checkbox">
+                                </div>
+                            </div>
+
+                            <div class="flex-col">
+                                <div class="slider flex-col">
+                                    Factor
+                                    <input id="alignmentFactor" type="range" min="0.01" max="5" value="50"
+                                        class="slider">
+                                </div>
+
+                                <div class="slider flex-col">
+                                    View Distance
+                                    <input id="alignmentRange" type="range" min="1" max="100" value="50" class="slider">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="content w-100">
+            <div id="container"></div>
+            <img id="projection" src="./img/equirectangle_projection.png"/>
+        </div>
+    </div>
+</body>

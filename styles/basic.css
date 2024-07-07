@@ -1,0 +1,64 @@
+body { 
+    margin: 0; 
+    overflow: hidden;
+    font-family: "helvetica";
+}
+
+header {
+    width: 100%;
+}
+
+#wrapper {
+    width: 100%;
+    margin: 0;
+}
+
+
+img {
+    display:none;
+
+}
+
+#container {
+    position:fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+}
+
+
+#p5sketch {
+    float: right;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+
+.title.center,
+.center-text {
+    text-align: center;
+}
+
+.prevent-select {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none; 
+}
+
+input {
+    background-color: #eee;
+    border-radius: 5px;
+}
+
+input[type="text"] {
+    width: 40px;
+    padding: 5px;
+    margin: 5px;
+}

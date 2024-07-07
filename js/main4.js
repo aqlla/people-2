@@ -8,9 +8,9 @@ const sizes = [
 	2, 5, 8, 11, 14, 17, 23, 29, 32, 35, 44, 56, 68
 ]
 
-const SUBDIVISIONS = 14
+const SUBDIVISIONS = 32
 const radius = 25
-const distance = 25 + 100 / SUBDIVISIONS
+const distance = 15 + 100 / SUBDIVISIONS
 const FOV = 30;
 
 const SCALE = 1;
@@ -223,7 +223,7 @@ window.addEventListener('click', onclick)
 window.addEventListener('pointermove', onPointerMove);
 
 
-fetch(`/dist/goldberg_${SUBDIVISIONS}_${radius}.json`)
+fetch(`/goldberg_${SUBDIVISIONS}_${radius}.json`)
 	.then(res => {
 		console.log(`found JSON file for goldberg ${SUBDIVISIONS}-${radius}`)
 		return res.json()

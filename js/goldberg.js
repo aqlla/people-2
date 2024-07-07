@@ -180,7 +180,6 @@ export const groupFaces = (geometry, radius) => {
         .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
         .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
         .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
 
     const tiles = [ ...pentagons, ...hexes ]
     .each(t => t['vertices'] = t.vertices.map(v => normalize(radius, v)))

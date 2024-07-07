@@ -16,6 +16,7 @@ const FOV = 30;
 const SCALE = 1;
 const WIREFRAME = false
 const FLAT_SHADING = false
+// const FLAT_TILES = true
 const OUTLINES = true
 
 const moveSpeed = 0.1;

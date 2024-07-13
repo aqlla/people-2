@@ -1,8 +1,8 @@
-import * as THREE from 'three';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { groupFaces, toJson } from './goldberg.js';
 import { saveAs } from 'file-saver';
+import * as THREE from 'three';
 
 const sizes = [
 	2, 5, 8, 11, 14, 17, 23, 29, 32, 35, 44, 56, 68, 89

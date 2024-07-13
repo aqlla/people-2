@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import * as BufferGeometryUtils from "./buffergeometryutils.js"
 import { groupFaces, toJson } from './goldberg';
 import { saveAs } from 'file-saver';
 

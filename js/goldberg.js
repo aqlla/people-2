@@ -64,43 +64,80 @@ const findNextFace = ([center, searchVert], searchFaces) => {
     const newSearchVert = getVerts(next)
         .find(e => e !== searchVert && e !== center)
 
-    return [next].concat(findNextFace([center, newSearchVert], searchFaces))
+    return [next, ...findNextFace([center, newSearchVert], searchFaces)]
 }
 
-const getAdjacentOrderedHex = (geo, oldCenter, cache) => (commonEdge) => {
+
+const getAdjacentHex = (geo, oldCenter, cache, facet) => (commonEdge) => {
     const adjFace = geo.faces
         // Get faces with edge, filter out face having `oldCenter` vert, as that is the
         // old one which we got the `commonEdge` from.
         .find(f => !cache.has(f) && faceHasEdge(commonEdge, f) && !getVerts(f).includes(oldCenter))
 
-    if (!adjFace) return undefined
+    if (!adjFace) { return [] }
 
     // Get center of the new hex.
     const center = getApex(commonEdge)(adjFace)
 
     // Get other faces which share the new center
     const hexFaces = geo.faces
-        .filter(f => f !== adjFace && hasVertIndex(center, f))
-
-    // Recursively find other faces
-    const ordered = [adjFace]
-        // Recursively find the next adjacent face until we have all 6 in order
-        .concat(findNextFace([center, commonEdge[0]], hexFaces))
-        // Add faces to the cache
+        .filter(f => hasVertIndex(center, f))
         .each(f => cache.add(f))
-    
-    const verts = ordered
+
+    const verts = hexFaces
         .flatMap(({a, b, c}) => [a, b, c])
         .distinct()
         .filter(v => v !== center)
 
     return { 
         center: center, 
-        faces: ordered,
+        faces: hexFaces,
         verts: verts,
-        vertices: verts.map(v => geo.vertices[v])
+        facet,
+        vertices: verts.map(v => geo.vertices[v]),
+        centroid: geo.vertices[center]
     }
 }
+
+// const getAdjacentOrderedHex = (geo, oldCenter, cache, depth) => (commonEdge) => {
+//     const adjFace = geo.faces
+//         // Get faces with edge, filter out face having `oldCenter` vert, as that is the
+//         // old one which we got the `commonEdge` from.
+//         .find(f => !cache.has(f) && faceHasEdge(commonEdge, f) && !getVerts(f).includes(oldCenter))
+
+//     if (!adjFace) {
+//         // console.log()
+//         return undefined
+//     }
+
+//     // Get center of the new hex.
+//     const center = getApex(commonEdge)(adjFace)
+
+//     // Get other faces which share the new center
+//     const hexFaces = geo.faces
+//         .filter(f => f !== adjFace && hasVertIndex(center, f))
+
+//     // cache.add(adjFace)
+//     // Recursively find other faces
+//     const ordered = [adjFace]
+//         // Recursively find the next adjacent face until we have all 6 in order
+//         .concat(findNextFace([center, commonEdge[0]], hexFaces))
+//         // Add faces to the cache
+//         .each(f => cache.add(f))
+    
+//     const verts = ordered
+//         .flatMap(({a, b, c}) => [a, b, c])
+//         .distinct()
+//         .filter(v => v !== center)
+
+//     return { 
+//         center: center, 
+//         faces: ordered,
+//         verts: verts,
+//         vertices: verts.map(v => geo.vertices[v]),
+//         centroid: geo.vertices[center]
+//     }
+// }
 
 const getTileFromCenter = (geo, cache) => (center, i) => {
     const faces = geo.faces
@@ -112,87 +149,59 @@ const getTileFromCenter = (geo, cache) => (center, i) => {
         .distinct()
         .filter(v => v !== center)
 
-    return { center, faces, verts, facet: i,
-        vertices: verts.map(v => geo.vertices[v]) 
+    return { 
+        center, 
+        faces, verts, 
+        facet: i,
+        vertices: verts.map(v => geo.vertices[v]),
+        centroid: geo.vertices[center] 
     }
 }
 
-const getHexesAroundTile = (geo, cache, limits) => (tile) => {
+const getHexesAroundTile = (geo, cache, limits, tile) => {
     if (cache.length === geo.faces.length) return []
-
     const { center, faces, facet } = tile
     const searchFaces = limits 
         ? faces.slice(limits[0], limits[1] + 1) 
         : faces
-    const hexes = searchFaces
-        .filter(f => cache.has(f))
+    
+    const immediateHexes = searchFaces
+        // .filter(f => cache.has(f))
         // Get face edge opposite the center vert
-        .map(f => getVerts(f).filter(v => v !== center))
-        .map(getAdjacentOrderedHex(geo, center, cache))
-        .filter(hex => !!hex && (hex['facet'] = facet) !== undefined)
+        .map(face => {
+            const commonEdge = getVerts(face).filter(v => v !== center)
+            return getAdjacentHex(geo, center, cache, facet)(commonEdge)
+        })
+
+    const hexes = []
+    // Using imperative loop because I ran into call stack limits 
+    for (const h of immediateHexes.flat()) {
+        hexes.push(...getHexesAroundTile(geo, cache, [2, 4], h))
+    }
     return [tile, ...hexes]
 }
 
 const normalize = (radius, vector) =>
 	vector.clone().normalize().multiplyScalar(radius);
 
+
 // Function to group faces into pentagons and hexagons
-export const groupFaces = (geometry, radius) => {
-    // const cache = new Set()
-	const usedFaces = new Set();
-	const pentagons = geometry.vertices
+export const groupFaces = (geo, radius) => {
+	const cache = new Set();
+	const pentagons = geo.vertices
 		.keys().toArray()
-		.filter(vertHasNumAdjacentFaces(5, geometry.faces))
-		.map(getTileFromCenter(geometry, usedFaces))
+		.filter(vertHasNumAdjacentFaces(5, geo.faces))
+		.map(getTileFromCenter(geo, cache))
 
-    
-    const hexes = pentagons
-        .flatMap(getHexesAroundTile(geometry, usedFaces))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-        .flatMap(getHexesAroundTile(geometry, usedFaces, [2, 4]))
-
-    const tiles = [ ...pentagons, ...hexes ]
-    .each(t => t['vertices'] = t.vertices.map(v => normalize(radius, v)))
-
-    return tiles
+    return pentagons
+        .flatMap(p => getHexesAroundTile(geo, cache, undefined, p))
 }
-
-
 
 export const toJson = (tiles) => {
     return JSON.stringify(tiles.map(t => ({
         facet: t.facet,
         center: t.center,
+        centroid: t.centroid,
         vertices: t.vertices.map(vecToArr3),
     })))
 }

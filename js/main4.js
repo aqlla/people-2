@@ -368,7 +368,7 @@ window.addEventListener('click', onclick)
 window.addEventListener('pointermove', onPointerMove);
 
 
-fetch(`/public/goldberg_${SUBDIVISIONS}_${radius}.json`)
+fetch(`./public/goldberg_${SUBDIVISIONS}_${radius}.json`)
 	.then(res => {
 		console.log(`found JSON file for goldberg ${SUBDIVISIONS}-${radius}`)
 		return res.json()

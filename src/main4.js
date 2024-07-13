@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { groupFaces, toJson } from './goldberg';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { groupFaces, toJson } from './goldberg.js';
 import { saveAs } from 'file-saver';
 
 const sizes = [
@@ -368,7 +368,7 @@ window.addEventListener('click', onclick)
 window.addEventListener('pointermove', onPointerMove);
 
 
-fetch(`./public/goldberg_${SUBDIVISIONS}_${radius}.json`)
+fetch(`/public/goldberg_${SUBDIVISIONS}_${radius}.json`)
 	.then(res => {
 		console.log(`found JSON file for goldberg ${SUBDIVISIONS}-${radius}`)
 		return res.json()
